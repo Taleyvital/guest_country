@@ -86,7 +86,8 @@ export const useOnlineGame = (
       setMyPlayerId(playerId);
       setMessage(`Salle créée ! Partagez le code: ${code}`);
     } catch (error) {
-      setMessage('Erreur lors de la création de la salle');
+      console.error('Erreur lors de la création de la salle:', error);
+      setMessage(`Erreur lors de la création de la salle: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     }
   };
 

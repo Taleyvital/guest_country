@@ -11,21 +11,36 @@ export interface GameData {
 }
 
 export const saveGame = async (roomCode: string, gameData: GameData): Promise<void> => {
-  if (!window.storage) {
-    throw new Error('Storage API not available');
+  // Utiliser localStorage comme fallback
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(`room:${roomCode}`, JSON.stringify(gameData));
   }
-  await window.storage.set(`room:${roomCode}`, JSON.stringify(gameData), true);
+  
+  // Essayer l'API window.storage si disponible
+  if (window.storage) {
+    await window.storage.set(`room:${roomCode}`, JSON.stringify(gameData), true);
+  }
 };
 
 export const loadGame = async (roomCode: string): Promise<GameData | null> => {
   try {
-    if (!window.storage) {
-      console.error('Storage API not available');
-      return null;
+    // Essayer d'abord localStorage
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(`room:${roomCode}`);
+      if (stored) {
+        return JSON.parse(stored);
+      }
     }
-    const result = await window.storage.get(`room:${roomCode}`, true);
-    if (!result) return null;
-    return JSON.parse(result.value);
+    
+    // Essayer l'API window.storage si disponible
+    if (window.storage) {
+      const result = await window.storage.get(`room:${roomCode}`, true);
+      if (result) {
+        return JSON.parse(result.value);
+      }
+    }
+    
+    return null;
   } catch (error) {
     console.error('Error loading game:', error);
     return null;
