@@ -30,6 +30,8 @@ export default function CountryGuessGame() {
     setCurrentPlayer,
     aiDifficulty,
     setAiDifficulty,
+    playerCountry,
+    setPlayerCountry,
     initLocalGame,
     initSoloGame
   } = useGame();
@@ -222,7 +224,12 @@ export default function CountryGuessGame() {
       <SoloModeSetup
         aiDifficulty={aiDifficulty}
         setAiDifficulty={setAiDifficulty}
-        onStart={initSoloGame}
+        playerCountry={playerCountry}
+        setPlayerCountry={setPlayerCountry}
+        onStart={() => {
+          const msg = initSoloGame();
+          setMessage(msg);
+        }}
         onBack={() => setGameMode(null)}
       />
     );

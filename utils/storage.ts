@@ -11,11 +11,18 @@ export interface GameData {
 }
 
 export const saveGame = async (roomCode: string, gameData: GameData): Promise<void> => {
+  if (!window.storage) {
+    throw new Error('Storage API not available');
+  }
   await window.storage.set(`room:${roomCode}`, JSON.stringify(gameData), true);
 };
 
 export const loadGame = async (roomCode: string): Promise<GameData | null> => {
   try {
+    if (!window.storage) {
+      console.error('Storage API not available');
+      return null;
+    }
     const result = await window.storage.get(`room:${roomCode}`, true);
     if (!result) return null;
     return JSON.parse(result.value);
